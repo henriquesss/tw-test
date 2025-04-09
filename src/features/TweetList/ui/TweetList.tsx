@@ -1,5 +1,5 @@
 import React, {ReactElement, useEffect} from 'react';
-import {StyleSheet, Text, View, ActivityIndicator} from 'react-native';
+import {StyleSheet, Text, View, ActivityIndicator, RefreshControl} from 'react-native';
 import {FlatList} from 'react-native-gesture-handler';
 import {connect} from 'react-redux';
 
@@ -14,6 +14,7 @@ interface ITweetListProps {
 }
 
 function TweetListComponent({tweets}: ITweetListProps): ReactElement {
+  const [refreshing, setLoading] = React.useState(false);
   const dispatch = useAppDispatch();
   const { displayedData, loading, error } = useAppSelector((state: RootState) => state.tweets);
 
@@ -23,6 +24,12 @@ function TweetListComponent({tweets}: ITweetListProps): ReactElement {
 
   const handleLoadMore = () => {
     dispatch(loadMoreTweets());
+  };
+
+  const handleRefresh = () => {
+    setLoading(true);
+    dispatch(fetchUserTweets(''));
+    setLoading(false);
   };
 
   if (loading && displayedData.length === 0) {
@@ -42,6 +49,12 @@ function TweetListComponent({tweets}: ITweetListProps): ReactElement {
         keyExtractor={(_item, index) => index.toString()}
         onEndReached={handleLoadMore}
         onEndReachedThreshold={0.2}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={handleRefresh}
+          />
+        }
         maxToRenderPerBatch={5}
         initialNumToRender={5}
       />
