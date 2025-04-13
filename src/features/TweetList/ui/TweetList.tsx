@@ -1,5 +1,11 @@
 import React, {ReactElement, useEffect} from 'react';
-import {StyleSheet, Text, View, ActivityIndicator, RefreshControl} from 'react-native';
+import {
+  StyleSheet,
+  Text,
+  View,
+  ActivityIndicator,
+  RefreshControl,
+} from 'react-native';
 import {FlatList} from 'react-native-gesture-handler';
 import {connect} from 'react-redux';
 
@@ -16,7 +22,9 @@ interface ITweetListProps {
 function TweetListComponent({tweets}: ITweetListProps): ReactElement {
   const [refreshing, setLoading] = React.useState(false);
   const dispatch = useAppDispatch();
-  const { displayedData, loading, error } = useAppSelector((state: RootState) => state.tweets);
+  const {displayedData, loading, error} = useAppSelector(
+    (state: RootState) => state.tweets,
+  );
 
   useEffect(() => {
     dispatch(fetchUserTweets(''));
@@ -33,24 +41,35 @@ function TweetListComponent({tweets}: ITweetListProps): ReactElement {
   };
 
   if (loading && displayedData.length === 0) {
-    return <ActivityIndicator size="large" color="#0000ff" />;
+    return (
+      <ActivityIndicator
+        size="large"
+        color="#0000ff"
+        testID="loading-indicator"
+      />
+    );
   }
-  
+
   if (error) {
     return <Text>Error: {error}</Text>;
   }
 
-
   return (
     <View style={styles.container}>
       <FlatList
+        testID="flat-list"
         data={displayedData}
-        renderItem={({ item, index }: { item: ITweet, index: number }) => <Tweet key={index} tweet={item} />}
+        renderItem={({item, index}: {item: ITweet; index: number}) => (
+          <View testID="tweet-item">
+            <Tweet key={index} tweet={item} />
+          </View>
+        )}
         keyExtractor={(_item, index) => index.toString()}
         onEndReached={handleLoadMore}
         onEndReachedThreshold={0.2}
         refreshControl={
           <RefreshControl
+            testID="refresh-control"
             refreshing={refreshing}
             onRefresh={handleRefresh}
           />

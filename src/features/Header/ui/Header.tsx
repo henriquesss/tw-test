@@ -22,7 +22,6 @@ export function HeaderComponent({user}: IHeaderProps): ReactElement {
   const dispatch = useAppDispatch();
 
   useEffect(() => {
-    // dispatch(fetchUser('jsmith'));
     dispatch(fetchUser('user'));
   }, [dispatch]);
 
@@ -31,7 +30,7 @@ export function HeaderComponent({user}: IHeaderProps): ReactElement {
       <ImageBackground
         style={styles.backgroundImage}
         source={{
-          uri: user.profileImage || user["profile-image"], // data URL returns the profile image like this
+          uri: user.profileImage,
         }}>
         <View style={styles.userWrapper}>
           <Text testID="header-username" style={styles.text}>
